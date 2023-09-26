@@ -23,6 +23,7 @@ class _AuthScreenState extends State<AuthScreen> {
   var _isLogin = false;
   var _enteredEmail = '';
   var _enteredPassword = '';
+  var _enteredUsername = '';
   File? _selectedImage;
   var _isAuthenticating = false;
 
@@ -59,9 +60,9 @@ class _AuthScreenState extends State<AuthScreen> {
             .collection("users")
             .doc(userCredentials.user?.uid)
             .set({
-          "username": "",
+          "username": _enteredUsername,
           "email": _enteredEmail,
-          "image_url": _selectedImage,
+          "image_url": imageUrl,
         });
       }
     } on FirebaseAuthException catch (error) {
@@ -132,6 +133,23 @@ class _AuthScreenState extends State<AuthScreen> {
                               _enteredEmail = value!;
                             },
                           ),
+                          if (!_isLogin)
+                            TextFormField(
+                              decoration:
+                                  const InputDecoration(labelText: 'Username'),
+                              enableSuggestions: false,
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().length < 4) {
+                                  return 'Please enter at least 4 characters.';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _enteredUsername = value!;
+                              },
+                            ),
                           TextFormField(
                             decoration:
                                 const InputDecoration(labelText: 'Password'),
